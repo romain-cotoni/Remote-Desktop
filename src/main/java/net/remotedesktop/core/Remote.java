@@ -1,5 +1,8 @@
 package net.remotedesktop;
 
+import java.awt.Point;
+import java.awt.Robot;
+
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -10,6 +13,7 @@ import lombok.Setter;
 class Remote {
 	
 	public static int count = 1;
+	private Robot robot;
 	private String control_ip;
 	private boolean isRemoteOn = true;
 	private MessageClient messageClient;
@@ -25,7 +29,13 @@ class Remote {
 	private Thread streamScreenThread;
 	
 	Remote(String control_ip) {
+
+                Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
+			System.err.println("💥 Boom Thread " + thread.getName() + " crashed");
+		});
+
 		try {
+			this.robot = new Robot();
 			this.control_ip    = control_ip; 
 			this.scanner       = new Scanner(System.in);
 			this.messageClient = new MessageClient(this);
@@ -76,7 +86,11 @@ class Remote {
 	private void receiveMousePosition() {
 		try {
 			while(this.isRemoteOn) {
-				this.mouseReceiver.receiveMousePosition();
+				Point point = this.mouseReceiver.receiveMousePosition();
+				if(point != null) {
+					System.out.println("remote point: " + point.getX() + "-" + point.getY());
+					//this.robot.mouseMove((int)point.getX()+10, (int)point.getY()+10);
+				}
 			}
 		} catch(Exception e) {
 			System.out.println("Exception - Remote - receiveMousePosition(): " + e);

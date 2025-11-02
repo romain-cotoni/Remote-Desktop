@@ -41,7 +41,7 @@ class ScreenSender {
 	    this.controlDevice = controlDevice;
 		BufferedImage bufferedImage = this.captureScreenshot();
 		long timestamp = System.currentTimeMillis();
-		this.drawCursorOnImage(bufferedImage);
+		//this.drawCursorOnImage(bufferedImage);
 		byte[] imageBytes = this.compressToJPG(bufferedImage);
 		this.sendFrameInChunks(imageBytes, timestamp);
 	}

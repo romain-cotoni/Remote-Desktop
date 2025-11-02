@@ -51,6 +51,7 @@ class Control {
 	
 	
 	Control() {
+
 		Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
 			System.err.println("💥 Boom Thread " + thread.getName() + " crashed");
 		});
@@ -63,7 +64,7 @@ class Control {
 		this.frame.setSize(WIDTH, HEIGHT);
 		this.frame.setLocation(screenSize.width - WIDTH, screenSize.height - HEIGHT);
 		this.frame.setVisible(true);
-		
+
 		this.acceptConnectionsThread = new Thread( () -> this.messageServer.acceptConnections() );
 		this.processCommandsThread   = new Thread( () -> this.processCommands() );
 		
@@ -80,9 +81,9 @@ class Control {
 			
 			this.mouseSender    = new MouseSender(remote);
 			this.screenReceiver = new ScreenReceiver();
-			
-			//this.screenReceiver.setOnFrameReady( frameData -> { displayFrame(frameData); } );// Set the call back
-			
+
+            this.mouseSender.attachToFrame(this.frame);
+
 			this.receiveMessagesThread     = new Thread( () -> this.messageServer.receiveMessages(remote) );
 			this.streamMousePositionThread = new Thread( () -> this.streamMousePosition() );
 			this.receiveScreenStreamThread = new Thread( () -> this.receiveScreenStream() );
@@ -139,7 +140,7 @@ class Control {
 		try {
 			while(this.isControlOn) {
 				if(this.isStreamMousePositionOn) { 
-					this.mouseSender.streamMousePosition();
+					//this.mouseSender.streamMousePosition();
 					Thread.sleep(NetworkConfig.MOUSE_STREAM_ON_DELAY);
 				} else {
 					Thread.sleep(NetworkConfig.MOUSE_STREAM_OFF_DELAY);
